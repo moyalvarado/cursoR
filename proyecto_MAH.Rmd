@@ -1,0 +1,176 @@
+---
+title: "Proyecto"
+author: "Moisés Alvarado Hermida"
+date: "2024-04-04"
+output:
+  html_document: default
+  pdf_document: default
+  word_document: default
+---
+
+## Fuente de datos 
+
+Fuente: [INEGI, Vehículos de Motor Registrados en Circulación](https://www.inegi.org.mx/programas/vehiculosmotor/#datos_abiertos)
+
+
+```{r}
+##Carga de datos
+datos <- read.csv("vmrc_anual_tr_cifra_2022.csv")
+entidades <- read.csv("tc_entidad.csv")
+library(ggplot2) 
+
+
+```
+
+# 1. Objetivo
+Analizar y aplicar los conceptos relacionados con el Curso de R a los datos e información recopilados por el INEGI relacionados con el registro de Vehículos de Motor registrados en Circulación.
+
+# 2. Justificación
+La revisión de los datos recopilados por el INEGI relacionados con el registro de vehículos de motor que circulan o circularon por las diferetnes calles, avenidas, carreteras y caminos aporta información relacionada con las actividades económicas, sociales y culturales.
+
+Adicionalmente con esta información no solo puede vertir conocimiento sobre la demanda de produción sobre su demanda, su actividad, la predilección de la población por algún tipo o tamaño, sino también las necesidades que se tienen en cuanto a los materiales requeridos para su mantenimiento, operación, espacios, etc.
+
+
+```{r}
+## numero de autos en circulacion tendencia a los particualesres de todos los datos
+numeroTotalAUTO_OFICIAL <- sum(datos$AUTO_OFICIAL)
+numeroTotalAUTO_OFICIAL
+numeroTotalAUTO_PUBLICO <- sum(datos$AUTO_PUBLICO)
+numeroTotalAUTO_PUBLICO
+numeroTotalAUTO_PARTICULAR <- sum(datos$AUTO_PARTICULAR)
+numeroTotalAUTO_PARTICULAR 
+numeroTotalOtroCiculacion <-
+  sum(datos$CAM_PAS_OFICIAL) + sum(datos$CAM_PAS_PUBLICO) + 
+  sum(datos$CYC_CARGA_OFICIAL) + sum(datos$CYC_CARGA_PUBLICO) +
+  sum(datos$MOTO_OFICIAL) + sum(datos$MOTO_DE_ALQUILER) +
+  sum(datos$MOTO_PARTICULAR)
+vectorTotal <- c(sum(datos$AUTO_OFICIAL),sum(datos$AUTO_PUBLICO),sum(datos$AUTO_PARTICULAR),sum(numeroTotalOtroCiculacion))
+## los datos de grafica tienen tendencia hacia carro particular que donde se tiene un mayor numero de registtros
+pie(vectorTotal)
+
+
+```
+
+
+## Comparacion de Publico vs particular 
+
+
+CAM_PAS_PUBLICO,"Comprende los autobuses urbanos y suburbanos, microbuses, camiones escolares, camionetas pick-up (utilizadas para el transporte de trabajadores), ómnibus y en general, los vehículos con más de 7 asientos, destinados al transporte público o privado de personas. Es el servicio que prestan las personas físicas y morales al público en general, para el traslado de pasajeros y bienes a diferentes lugares del país, utilizando los caminos y puentes de Jurisdicción Federal, mediante una concesión otorgada por la Secretaría de Comunicaciones y Transportes."
+
+
+AUTO_PUBLICO,"Comprende los vehículos a motor (excepto motocicletas) destinados al transporte de personas, que tengan hasta 7 asientos (incluyendo el del conductor). Es el servicio que prestan las personas físicas y morales al público en general, para el traslado de pasajeros y bienes a diferentes lugares del país, utilizando los caminos y puentes de Jurisdicción Federal, mediante una concesión otorgada por la Secretaría de Comunicaciones y Transportes."
+
+# 3. Análisis exploratorio de los datos(Estadística descriptiva)
+
+```{r}
+numeroTotalPublico <- sum(datos$CAM_PAS_PUBLICO) + sum(datos$AUTO_PUBLICO) + sum(datos$CYC_CARGA_PUBLICO)
+numeroTotalPublico 
+numeroTotalParticular <- sum(datos$CAM_PAS_PARTICULAR) + sum(datos$AUTO_PARTICULAR) + sum(datos$CYC_CARGA_PARTICULAR)
+numeroTotalParticular
+vectorPublicoPrivado<- c(numeroTotalPublico,numeroTotalParticular)
+
+pie(vectorPublicoPrivado)
+```
+
+## AUTOS PARTICULAES
+
+```{r}
+ggplot(datos , aes(x=ID_ENTIDAD,  y=AUTO_PARTICULAR ,fill = ID_MUNICIPIO)) + geom_col()
+```
+
+
+## media,mediana,varianza,Desviación Estándar total
+
+# 4. Análisis estadístico inferencial
+
+
+
+```{r}
+## es el dato mas llamativo porque no tienes ceros en la tablas en las otras medias tendencia a cero se tendria que hacer una ponderacion de datos para calcular las otras
+
+## media total
+mean(datos$AUTO_PARTICULAR)
+# mediana total
+median(datos$AUTO_PARTICULAR)
+# varianza 
+var(datos$AUTO_PARTICULAR)
+# Desviación Estándar
+sd(datos$AUTO_PARTICULAR)
+#numero total por el pais
+numeroTotalAUTO_PARTICULAR 
+```
+# 5. Resultados
+
+## Analsis por estado
+
+## Cuidad de México 
+
+```{r}
+CiudadMexico<- subset(datos,datos$ID_ENTIDAD==9)
+## media total
+mediaDF<-mean(CiudadMexico$AUTO_PARTICULAR)
+mediaDF
+# mediana total
+median(CiudadMexico$AUTO_PARTICULAR)
+# varianza 
+var(CiudadMexico$AUTO_PARTICULAR)
+# Desviación Estándar
+sd(CiudadMexico$AUTO_PARTICULAR)
+#numero total por el estado
+sum(CiudadMexico$AUTO_PARTICULAR)
+
+
+```
+
+```{r}
+ggplot(CiudadMexico, aes(x=ID_MUNICIPIO,  y=AUTO_PARTICULAR )) + geom_col()
+```
+
+## Estado de México 
+
+```{r}
+Mexico<- subset(datos,datos$ID_ENTIDAD==15)
+## media total
+mediaMexico <- mean(Mexico$AUTO_PARTICULAR)
+mediaMexico 
+# mediana total
+median(Mexico$AUTO_PARTICULAR)
+# varianza 
+var(Mexico$AUTO_PARTICULAR)
+# Desviación Estándar
+sd(Mexico$AUTO_PARTICULAR)
+#numero total por el estado
+sum(Mexico$AUTO_PARTICULAR)
+```
+
+```{r}
+ggplot(Mexico, aes(x=ID_MUNICIPIO,  y=AUTO_PARTICULAR )) + geom_col()
+```
+
+## Veracruz 
+
+```{r}
+Veracruz<- subset(datos,datos$ID_ENTIDAD==30)
+
+## media total
+mediaVeracruz<-mean(Veracruz$AUTO_PARTICULAR)
+mediaVeracruz
+# mediana total
+median(Veracruz$AUTO_PARTICULAR)
+# varianza 
+var(Veracruz$AUTO_PARTICULAR)
+# Desviación Estándar
+sd(Veracruz$AUTO_PARTICULAR)
+#numero total por el estado
+sum(Veracruz$AUTO_PARTICULAR)
+```
+
+```{r}
+ggplot(Veracruz, aes(x=ID_MUNICIPIO,  y=AUTO_PARTICULAR )) + geom_col()
+```
+
+# En dependencia del número de municipios la afluencia de vehículos se dispersa, sin embargo existen contados lugares donde existe una gran cantidad de estos, los cuales están asociados a las grandes urbes y centros de negocio donde la necesidad de movilidad es mayor.
+
+# Si bien es necesario comentar que el la Cuidad de México se aprecia una dispersión menor, lo cual está en función del número de municipios (alcaldias en su momento) que tiene. Adicionalmente la Ciudad de México cuenta con muchos más autos que cualquier otra.
+
+ 
